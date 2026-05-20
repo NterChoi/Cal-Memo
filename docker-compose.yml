@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # 1. DB (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: cal-memo-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+      POSTGRES_DB: ${DB_NAME:-cal_memo}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. 실시간 동기화 및 캐시 (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: cal-memo-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String?
+  memos     Memo[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("users")
+}
+
+model Memo {
+  id        String    @id @default(uuid())
+  title     String
+  content   String?   @db.Text
+  date      DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  tags Tag[] @relation("MemoTags")
+
+  @@map("memos")
+  @@index([userId, date])
+}
+
+model Tag {
+  id    String  @id @default(uuid())
+  name  String  @unique
+  color String?
+
+  memos Memo[] @relation("MemoTags")
+
+  @@map("tags")
+}
